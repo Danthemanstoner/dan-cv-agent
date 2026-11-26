@@ -1,0 +1,28 @@
+# 8-bit Agent Dan, 16x20: G phosphor, D dim green (hair, stubble), K ink (features), . clear
+NORMAL = [
+"...G..G..G..G...",
+"..GDG.GDGGDGG.G.",
+".GDDGGDDGDDDGGD.",
+".GDDDDDDDDDDDDG.",
+"GDDDDDDDDDDDDDDG",
+"GDDDDDDDDDDDDDDG",
+".GDKKKKKKKKKKDG.",
+".GKGGGGGGGGGGKG.",
+"GGKGKKKGGKKKGKGG",
+"GKKGGGGGGGGGGKKG",
+"GGKGGKGGGGKGGKGG",
+".GKGGGGGKGGGGKG.",
+"..KGGGGGKKGGGK..",
+"..KGDGGGGGGGDK..",
+"..KDGKGGGGGKDK..",
+"...KDDKKKKKDK...",
+"....KDDDDDDK....",
+".....KKKKKK.....",
+"......GGGG......",
+".....GGGGGG.....",
+]
+WINK = list(NORMAL)
+WINK[8]  = "GGKGKKKGGGGGGKGG"
+WINK[10] = "GGKGGKGGGKKKGKGG"
+WINK[14] = "..KDGKGGGGGGKDK."[:16]
+WINK[15] = "...KDDKKKKKKDK.."[:16]

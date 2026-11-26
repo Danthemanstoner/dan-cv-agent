@@ -1,0 +1,624 @@
+{
+  "updated": "2026-11-26",
+  "sources": {
+    "cv-2026-11-25": "Dan's CV, 25 Nov 2026",
+    "site": "dan-stoner-cv-site.vercel.app, last updated 20 Oct 2026",
+    "dan-2026-11-26": "Dan confirmed, 26 Nov 2026",
+    "dan-2026-09-28": "Dan confirmed, 28 Sep 2026"
+  },
+  "facts": [
+    {
+      "id": "who.summary",
+      "topic": "profile",
+      "confidence": "verified",
+      "source": [
+        "cv-2026-11-25"
+      ],
+      "text": "Dan Stoner is a full-stack product engineer: TypeScript, Node, React and Postgres, Shopify apps and storefronts, and practical AI tools. He has a creative-director background and now ships production software for merchant teams."
+    },
+    {
+      "id": "who.location",
+      "topic": "profile",
+      "confidence": "verified",
+      "source": [
+        "cv-2026-11-25",
+        "site"
+      ],
+      "text": "Dan is British, based in Bangkok (UTC+7), and holds a Thai work permit."
+    },
+    {
+      "id": "who.operator",
+      "topic": "profile",
+      "confidence": "verified",
+      "source": [
+        "site"
+      ],
+      "text": "Dan describes himself as a business-aware technical operator: he learns the operation first (orders, inventory, delivery slots, staff workflows, customer channels, payments), then builds the systems that make it reliable, and owns outcomes after launch."
+    },
+    {
+      "id": "who.ai",
+      "topic": "profile",
+      "confidence": "verified",
+      "source": [
+        "cv-2026-11-25",
+        "site"
+      ],
+      "text": "Dan uses AI coding agents (Claude Code and Cursor) daily for implementation speed and adversarial review. He owns the plan, architecture, business rules, review, verification and production, and tests what the agents produce before it ships."
+    },
+    {
+      "id": "who.liquid",
+      "topic": "profile",
+      "confidence": "verified",
+      "source": [
+        "cv-2026-11-25"
+      ],
+      "text": "Dan can plan, review and debug Shopify Liquid."
+    },
+    {
+      "id": "who.links",
+      "topic": "contact",
+      "confidence": "verified",
+      "source": [
+        "cv-2026-11-25",
+        "site"
+      ],
+      "text": "GitHub: github.com/Danthemanstoner (his production work is in private repositories). LinkedIn: linkedin.com/in/danieljamesstoner. Site: dan-stoner-cv-site.vercel.app."
+    },
+    {
+      "id": "contact.email",
+      "topic": "contact",
+      "confidence": "verified",
+      "source": [
+        "site",
+        "dan-2026-11-26"
+      ],
+      "text": "Email Dan at danieljamesstoner@icloud.com."
+    },
+    {
+      "id": "avail.summary",
+      "topic": "availability",
+      "confidence": "verified",
+      "source": [
+        "cv-2026-11-25",
+        "site"
+      ],
+      "text": "Dan is open to remote work (including full-time through an employer of record), hybrid roles in Bangkok, contract and freelance work."
+    },
+    {
+      "id": "edu.futureworks",
+      "topic": "education",
+      "confidence": "verified",
+      "source": [
+        "cv-2026-11-25",
+        "site"
+      ],
+      "text": "Dan studied TV & Film Production (editing, camera and lighting) at Futureworks, finishing in 2010."
+    },
+    {
+      "id": "edu.school",
+      "topic": "education",
+      "confidence": "verified",
+      "source": [
+        "cv-2026-11-25"
+      ],
+      "text": "At Theale Green Secondary School he got an A* in Business Studies and IT, and an A in Computer Technology."
+    },
+    {
+      "id": "edu.no-degree",
+      "topic": "education",
+      "confidence": "verified",
+      "source": [
+        "cv-2026-11-25"
+      ],
+      "negates": "degree",
+      "text": "Dan does not have a university degree."
+    },
+    {
+      "id": "bk.client",
+      "topic": "basketeer",
+      "confidence": "verified",
+      "source": [
+        "cv-2026-11-25",
+        "site"
+      ],
+      "negates": "founder",
+      "text": "Basketeer is a client: a Bangkok gifting e-commerce group with three brands (Basketeer, Charlotte Bakery and Flowers by Basketeer), about 5,300 products and 50+ staff. Dan has been its Technical & Creative Lead since 2022. He did not found it."
+    },
+    {
+      "id": "bk.migration",
+      "topic": "basketeer",
+      "confidence": "verified",
+      "source": [
+        "cv-2026-11-25",
+        "dan-2026-11-26"
+      ],
+      "text": "Dan led the WooCommerce to Shopify migration in March 2026: 5,342 products, 401 collections and 30,000+ customers moved, ACF fields mapped to metafields, and images moved from S3 to Shopify's CDN, with SEO redirects preserved."
+    },
+    {
+      "id": "bk.horizon",
+      "topic": "basketeer",
+      "confidence": "verified",
+      "source": [
+        "cv-2026-11-25",
+        "dan-2026-11-26"
+      ],
+      "text": "Dan built Basketeer's Horizon (Online Store 2.0) storefront: 118 custom sections, metafield-driven content, designed in Figma, built in Liquid, HTML, CSS and JavaScript, kept in Git and deployed with Shopify CLI."
+    },
+    {
+      "id": "bk.precart",
+      "topic": "basketeer",
+      "confidence": "verified",
+      "source": [
+        "cv-2026-11-25",
+        "site"
+      ],
+      "negates": "shopify-plus",
+      "text": "Dan built a custom React pre-cart ordering step that handles gift options, delivery slots, variants and validation before payment. Basketeer is not on Shopify Plus; the pre-cart avoids needing it for checkout customisation."
+    },
+    {
+      "id": "bk.extensions",
+      "topic": "basketeer",
+      "confidence": "verified",
+      "source": [
+        "cv-2026-11-25"
+      ],
+      "text": "Dan built 2 live Thank You page checkout extensions for Basketeer: payment slip upload, and PromptPay QR with bank transfer."
+    },
+    {
+      "id": "bk.ops",
+      "topic": "basketeer",
+      "confidence": "verified",
+      "source": [
+        "cv-2026-11-25"
+      ],
+      "text": "Dan built Basketeer's operations suite in TypeScript, Node, Express 5, Neon Postgres and Vercel: a custom Shopify app on the Admin REST and GraphQL APIs, 11 HMAC-verified webhooks, a Postgres order mirror kept in sync by webhooks and scheduled reconcilers, 31 scheduled jobs, about 129.5k lines of TypeScript and 330 test files. Staff use it daily."
+    },
+    {
+      "id": "bk.inbox",
+      "topic": "basketeer",
+      "confidence": "verified",
+      "source": [
+        "cv-2026-11-25",
+        "site"
+      ],
+      "text": "The suite includes a unified staff inbox for LINE, web chat and email, live over server-sent events, with a claim lock so two people never answer the same customer."
+    },
+    {
+      "id": "bk.driver",
+      "topic": "basketeer",
+      "confidence": "verified",
+      "source": [
+        "cv-2026-11-25",
+        "site"
+      ],
+      "text": "The suite includes a logistics and driver app (a PWA) with GPS proof of delivery."
+    },
+    {
+      "id": "bk.mirror",
+      "topic": "basketeer",
+      "confidence": "verified",
+      "source": [
+        "site"
+      ],
+      "text": "Staff screens read a Neon Postgres mirror instead of hitting Shopify directly; reconcilers check the order mirror every 30 minutes and drafts every 20, so drift is detected and repaired rather than silent. Shopify stays the source of truth."
+    },
+    {
+      "id": "bk.seo",
+      "topic": "basketeer",
+      "confidence": "verified",
+      "source": [
+        "cv-2026-11-25",
+        "site"
+      ],
+      "text": "Dan runs technical SEO across about 10,000 Basketeer URLs."
+    },
+    {
+      "id": "bk.payments",
+      "topic": "basketeer",
+      "confidence": "verified",
+      "source": [
+        "site"
+      ],
+      "text": "Dan built Thai payment flows end to end: PromptPay QR and card against the order total, with verified status written back."
+    },
+    {
+      "id": "basil.summary",
+      "topic": "basil",
+      "confidence": "verified",
+      "source": [
+        "cv-2026-11-25",
+        "site"
+      ],
+      "text": "Basil is Basketeer's AI sales assistant on web chat, LINE and email, built by Dan. It has bounded tools (catalogue and image search, inventory and calendar reads, capped discounts, payment QR, order updates, draft orders through the ops app) with a policy check before every tool call, and hands off to a human with a reason when unsure. It is not connected to Agent Dan."
+    },
+    {
+      "id": "basil.live",
+      "topic": "basil",
+      "confidence": "verified",
+      "source": [
+        "dan-2026-11-26"
+      ],
+      "text": "Basil is working and active at Basketeer."
+    },
+    {
+      "id": "ops.summary",
+      "topic": "opslayer",
+      "confidence": "verified",
+      "source": [
+        "cv-2026-11-25",
+        "site"
+      ],
+      "text": "OpsLayer is Dan's own product in development: the Basketeer commerce-ops stack packaged so other Shopify merchants could run it, with a real install flow (HMAC-verified install, token exchange and OAuth callback, with unit tests). Basketeer is the reference install, hosted on Fly in Singapore."
+    },
+    {
+      "id": "ops.status",
+      "topic": "opslayer",
+      "confidence": "verified",
+      "source": [
+        "cv-2026-11-25",
+        "site"
+      ],
+      "negates": "opslayer-commercial",
+      "text": "OpsLayer is pre-launch: it is not on the Shopify App Store, has no paying customers or external merchants, and there is no registered company yet."
+    },
+    {
+      "id": "dsp.summary",
+      "topic": "danshoppro",
+      "confidence": "verified",
+      "source": [
+        "cv-2026-11-25"
+      ],
+      "text": "DanShopPro is an internal AI image and video suite for the Basketeer team, forked from the open-source Rust editor PhotoCraft and built with Claude as an engineering partner. It has generative fill, expand and relight, a node canvas over image and video models, an AI video timeline, one-button staff apps and a licence console, and is in daily use by the Basketeer team. The same licence system runs DanVector Pro, DanPDF Pro and DanLight."
+    },
+    {
+      "id": "peek.summary",
+      "topic": "peek",
+      "confidence": "verified",
+      "source": [
+        "cv-2026-11-25",
+        "site"
+      ],
+      "text": "Peek is Dan's native macOS app, written in Swift. You hover or draw a region over any on-screen text and it translates it into English using Apple's Vision and Translation frameworks, entirely on the device: no account, no server, no telemetry, 18 languages, macOS 15+. It is built and shipping, but not sold yet. Site: peek-app.co."
+    },
+    {
+      "id": "print.summary",
+      "topic": "print-studio",
+      "confidence": "verified",
+      "source": [
+        "site"
+      ],
+      "text": "Print Studio is a working fine-art print pipeline Dan built as a prototype: a customer editor, a paid-order webhook that checks HMAC signatures and renders print-ready files, and a staff console for the print room. The browser preview and the print file use identical code, so they cannot drift apart. About 14,800 lines, 7 serverless functions, 5 pages and 5 test suites on Vercel."
+    },
+    {
+      "id": "inc.webhook",
+      "topic": "incidents",
+      "confidence": "verified",
+      "source": [
+        "site",
+        "cv-2026-11-25"
+      ],
+      "text": "Incident: a payment provider webhook answered HTTP 200 while the insert path discarded settled payments: zero rows written, no exception. Dan's rule since: check the side effect (row written, order marked paid), not the status code."
+    },
+    {
+      "id": "inc.form",
+      "topic": "incidents",
+      "confidence": "verified",
+      "source": [
+        "site",
+        "cv-2026-11-25"
+      ],
+      "text": "Incident: an enquiry form stored every submission, but nothing read them: no email, no inbox item, no alert. 111 messages sat unread. Dan's rule since: every producer needs a named consumer."
+    },
+    {
+      "id": "inc.fraud",
+      "topic": "incidents",
+      "confidence": "verified",
+      "source": [
+        "site"
+      ],
+      "text": "Incident: a fraud rule treated the literal word 'checkout' as a signal and blocked real customers on payment pages while reporting success. Dan's rule since: test rules against the happy path, with money on the line."
+    },
+    {
+      "id": "skills.daily",
+      "topic": "skills",
+      "confidence": "verified",
+      "source": [
+        "site"
+      ],
+      "text": "Strong, daily: Shopify Admin GraphQL and REST, Liquid, webhooks, metafields, draft orders, custom apps; TypeScript and Node; Postgres and Neon; Vercel; Fly; Cloudflare; LINE Messaging API; Thai payments; HMAC webhooks; LLM tool-calling agents."
+    },
+    {
+      "id": "skills.comfortable",
+      "topic": "skills",
+      "confidence": "verified",
+      "source": [
+        "site"
+      ],
+      "text": "Comfortable: SQL on production, auth (JWT, 2FA, passkeys), security review follow-through, HTML and CSS, technical SEO, and deploys with blast-radius rules."
+    },
+    {
+      "id": "skills.domain",
+      "topic": "skills",
+      "confidence": "verified",
+      "source": [
+        "site"
+      ],
+      "text": "Domain: Thai conversational commerce (LINE-first, PromptPay, bank-slip culture, Bangkok delivery logistics) and multi-agent coding with adversarial review."
+    },
+    {
+      "id": "creative.summary",
+      "topic": "creative",
+      "confidence": "verified",
+      "source": [
+        "cv-2026-11-25",
+        "site"
+      ],
+      "text": "Before engineering, Dan worked as a creative director and director of photography, freelance across Bangkok and Asia-Pacific from 2021, for brands including Ford, Lenovo, BBC, Cartier, Toyota and Downy, from concept through delivery."
+    },
+    {
+      "id": "creative.viddyoze-views",
+      "topic": "creative",
+      "confidence": "verified",
+      "source": [
+        "site"
+      ],
+      "text": "At Viddyoze, Dan scaled content and ad spend through lockdown, built and staffed a new content department, and selected videos passed 40M+ views."
+    },
+    {
+      "id": "creative.viddyoze-revenue",
+      "topic": "creative",
+      "confidence": "dan-to-confirm",
+      "source": [
+        "dan-2026-09-28"
+      ],
+      "text": "At Viddyoze, Dan's video creative and ad buying drove $30M+ in revenue."
+    },
+    {
+      "id": "creative.tvc",
+      "topic": "creative",
+      "confidence": "verified",
+      "source": [
+        "cv-2026-11-25",
+        "site"
+      ],
+      "text": "At CDL Software, Dan produced the company's first TV commercial, from script through shoot, as part of a rebrand."
+    }
+  ],
+  "timeline": [
+    {
+      "role": "Technical & Creative Lead",
+      "org": "Basketeer (client)",
+      "from": "2022",
+      "to": "present",
+      "place": "Bangkok",
+      "facts": [
+        "bk.client",
+        "bk.ops",
+        "bk.migration"
+      ]
+    },
+    {
+      "role": "Creative Director & Director of Photography",
+      "org": "Freelance",
+      "from": "2021",
+      "to": "present",
+      "place": "Bangkok & APAC",
+      "facts": [
+        "creative.summary"
+      ]
+    },
+    {
+      "role": "Senior Cinematographer & Creative Director",
+      "org": "Viddyoze",
+      "from": "Dec 2019",
+      "to": "Aug 2021",
+      "facts": [
+        "creative.viddyoze-views"
+      ]
+    },
+    {
+      "role": "Head of Video",
+      "org": "Beauty Bay",
+      "from": "May 2019",
+      "to": "Jul 2019",
+      "note": "Led video across online, social and TV.",
+      "source": [
+        "site"
+      ]
+    },
+    {
+      "role": "Senior Content Producer / Cinematographer",
+      "org": "CDL Software",
+      "from": "2017",
+      "to": "Mar 2019",
+      "facts": [
+        "creative.tvc"
+      ]
+    },
+    {
+      "role": "Senior Creative Lead, Video",
+      "org": "Myprotein",
+      "from": "Jan 2016",
+      "to": "Dec 2016",
+      "note": "Led the video team from concept to completion for brand and marketing.",
+      "source": [
+        "site"
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "slug": "basketeer-migration",
+      "name": "WooCommerce → Shopify migration",
+      "client": "Basketeer",
+      "when": "March 2026",
+      "facts": [
+        "bk.migration",
+        "bk.horizon",
+        "bk.extensions"
+      ],
+      "numbers": [
+        [
+          "5,342",
+          "products moved"
+        ],
+        [
+          "401",
+          "collections"
+        ],
+        [
+          "30,000+",
+          "customers migrated"
+        ],
+        [
+          "118",
+          "custom theme sections"
+        ]
+      ],
+      "stack": [
+        "Shopify",
+        "Liquid",
+        "Figma",
+        "Shopify CLI",
+        "JavaScript"
+      ],
+      "links": [
+        "basketeer.com"
+      ],
+      "lottie": "talking"
+    },
+    {
+      "slug": "basketeer-ops",
+      "name": "Basketeer operations suite",
+      "client": "Basketeer",
+      "when": "2022 to present",
+      "facts": [
+        "bk.ops",
+        "bk.inbox",
+        "bk.driver",
+        "bk.mirror",
+        "bk.payments",
+        "bk.precart"
+      ],
+      "numbers": [
+        [
+          "11",
+          "verified webhooks"
+        ],
+        [
+          "31",
+          "scheduled jobs"
+        ],
+        [
+          "~129.5k",
+          "lines of TypeScript"
+        ],
+        [
+          "330",
+          "test files"
+        ]
+      ],
+      "stack": [
+        "TypeScript",
+        "Node",
+        "Express 5",
+        "Neon Postgres",
+        "Vercel",
+        "Shopify Admin API",
+        "LINE"
+      ],
+      "links": [
+        "basketeer.com"
+      ],
+      "lottie": "thinking"
+    },
+    {
+      "slug": "basil",
+      "name": "Basil, Basketeer's AI sales assistant",
+      "client": "Basketeer",
+      "facts": [
+        "basil.summary"
+      ],
+      "stack": [
+        "LLM tool calling",
+        "LINE",
+        "Shopify draft orders"
+      ],
+      "lottie": "talking"
+    },
+    {
+      "slug": "opslayer",
+      "name": "OpsLayer",
+      "client": "Dan's own product",
+      "facts": [
+        "ops.summary",
+        "ops.status"
+      ],
+      "stack": [
+        "TypeScript",
+        "Neon",
+        "Fly",
+        "Shopify OAuth",
+        "LINE"
+      ],
+      "lottie": "thinking"
+    },
+    {
+      "slug": "danshoppro",
+      "name": "DanShopPro",
+      "client": "Internal tool for the Basketeer team",
+      "facts": [
+        "dsp.summary"
+      ],
+      "stack": [
+        "Rust",
+        "Gemini",
+        "Replicate"
+      ],
+      "lottie": "greeting"
+    },
+    {
+      "slug": "peek",
+      "name": "Peek",
+      "client": "Dan's own app",
+      "facts": [
+        "peek.summary"
+      ],
+      "stack": [
+        "Swift",
+        "Apple Vision",
+        "Apple Translation"
+      ],
+      "links": [
+        "peek-app.co"
+      ],
+      "lottie": "idle"
+    },
+    {
+      "slug": "print-studio",
+      "name": "Print Studio",
+      "client": "Prototype",
+      "facts": [
+        "print.summary"
+      ],
+      "stack": [
+        "Vercel functions",
+        "Vercel Blob",
+        "HMAC webhooks"
+      ],
+      "lottie": "thinking"
+    },
+    {
+      "slug": "creative",
+      "name": "Creative direction and film",
+      "client": "Brands including Ford, Lenovo, BBC, Cartier, Toyota and Downy",
+      "facts": [
+        "creative.summary",
+        "creative.viddyoze-views",
+        "creative.tvc"
+      ],
+      "stack": [],
+      "lottie": "greeting"
+    }
+  ]
+}

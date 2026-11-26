@@ -1,0 +1,39 @@
+{
+  "quiz": [
+    { "id": "q1", "question": "Which database sits under Basketeer's operations suite?",
+      "options": ["MongoDB", "Neon Postgres", "Firebase", "MySQL"], "answer": 1, "fact": "bk.ops",
+      "explain": "Neon Postgres, kept in sync with Shopify by webhooks and scheduled reconcilers." },
+    { "id": "q2", "question": "How many customers moved in the WooCommerce to Shopify migration?",
+      "options": ["3,000", "12,000", "30,000+", "300,000"], "answer": 2, "fact": "bk.migration",
+      "explain": "30,000+ customers, along with 5,342 products and 401 collections." },
+    { "id": "q3", "question": "DanShopPro started as a fork of which open-source editor?",
+      "options": ["GIMP", "Krita", "PhotoCraft", "Inkscape"], "answer": 2, "fact": "dsp.summary",
+      "explain": "PhotoCraft, an open-source editor written in Rust." },
+    { "id": "q4", "question": "How many live Thank You page checkout extensions did Dan build for Basketeer?",
+      "options": ["1", "2", "5", "None"], "answer": 1, "fact": "bk.extensions",
+      "explain": "Two: payment slip upload, and PromptPay QR with bank transfer." },
+    { "id": "q5", "question": "Peek, Dan's macOS app, is written in which language?",
+      "options": ["Swift", "Electron", "Kotlin", "Flutter"], "answer": 0, "fact": "peek.summary",
+      "explain": "Swift. It translates on-screen text on the device with Apple's Vision and Translation frameworks." }
+  ],
+  "incidents": [
+    { "id": "case1", "title": "The polite webhook", "fact": "inc.webhook",
+      "clue": "The payment provider gets '200 OK' every time. Customers have paid. But the orders never show as paid, and there are no errors anywhere.",
+      "options": ["The provider never sent the webhook", "The endpoint said OK, but the insert wrote zero rows", "The customers' banks reversed the payments"],
+      "answer": 1,
+      "truth": "The webhook answered 200 while the insert path discarded settled payments: zero rows written, no exception. The status code lied; the database told the truth.",
+      "rule": "Check the side effect (row written, order marked paid), not the status code." },
+    { "id": "case2", "title": "The friendly form", "fact": "inc.form",
+      "clue": "The enquiry form says 'Thanks, we'll be in touch!' every time. Nobody ever gets in touch.",
+      "options": ["The form was broken and saved nothing", "Messages were saved to a table that nothing read", "The replies went to spam"],
+      "answer": 1,
+      "truth": "Every submission was stored, but nothing read the table: no email, no inbox item, no alert. 111 messages sat unread.",
+      "rule": "Every producer needs a named consumer." },
+    { "id": "case3", "title": "The proud fraud rule", "fact": "inc.fraud",
+      "clue": "Real customers can't finish paying. Meanwhile the fraud rule's numbers say it's blocking lots of bad traffic.",
+      "options": ["A real bot attack", "The rule treated the word 'checkout' as a fraud signal", "The payment provider was down"],
+      "answer": 1,
+      "truth": "A fraud rule treated the literal word 'checkout' as a signal and blocked real customers on payment pages, while its own numbers said it was winning.",
+      "rule": "Test rules against the happy path, with money on the line." }
+  ]
+}
