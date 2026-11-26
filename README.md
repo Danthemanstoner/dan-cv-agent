@@ -50,7 +50,7 @@ Needs Node 22+.
 ```bash
 npm install
 npm run dev            # http://localhost:3000, in-memory message store
-npm test               # 34 tests: API, MCP with the real SDK client, truth rules, content checks
+npm test               # 37 tests: API, MCP with the real SDK client, truth rules, content checks
 npm run typecheck
 npm run build:cv       # rebuild public/cv.html and public/cv.pdf from the facts (needs Chrome)
 ```

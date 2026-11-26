@@ -26,7 +26,8 @@ const must = (id: string) => {
   return f;
 };
 const firstSentence = (t: string) => t.split(/(?<=\.)\s/)[0];
-const SEND_LIMIT_PER_HOUR = 3;
+/** Per visitor, and a backstop across everyone, per hour. */
+export const SEND_LIMITS = { perIp: 3, global: 30, windowMs: 3600_000 };
 
 const project = (slug: string) => rawFacts.projects.find(p => p.slug === slug);
 const projectFacts = (slugFacts: string[]) => slugFacts.map(verified).filter((f): f is Fact => !!f);
@@ -117,11 +118,11 @@ export const TOOLS: Tool[] = [
     run: async ({ confirm_token }, ctx) => {
       const v = verifyDraft(confirm_token);
       if (!v.ok) throw new ToolError(400, `token_${v.reason}`, v.reason === 'expired' ? 'That draft expired. Draft the message again.' : 'That confirm token is not valid. Draft the message again.');
-      const ip = ipHash(ctx.ip);
-      if (await ctx.store.countSince(ip, Date.now() - 3600_000) >= SEND_LIMIT_PER_HOUR)
-        throw new ToolError(429, 'too_many_messages', `Only ${SEND_LIMIT_PER_HOUR} messages an hour can be sent from here. Email Dan directly at danieljamesstoner@icloud.com.`);
-      const r = await ctx.store.save({ ...v.draft, token_hash: tokenHash(confirm_token), ip_hash: ip });
-      return { sent: true, reference: r.ref, persisted: true, already_sent: r.duplicate, emailed: false, note: `Saved for Dan. He replies to ${v.draft.reply_to} himself.` };
+      const r = await ctx.store.saveLimited({ ...v.draft, token_hash: tokenHash(confirm_token), ip_hash: ipHash(ctx.ip) }, SEND_LIMITS);
+      if (r.status === 'limited') throw new ToolError(429, 'too_many_messages', r.scope === 'visitor'
+        ? `Only ${SEND_LIMITS.perIp} messages an hour can be sent from here. Email Dan directly at danieljamesstoner@icloud.com.`
+        : 'Agent Dan has passed on a lot of messages this hour. Email Dan directly at danieljamesstoner@icloud.com.');
+      return { sent: true, reference: r.ref, persisted: true, already_sent: r.status === 'duplicate', emailed: false, note: `Saved for Dan. He replies to ${v.draft.reply_to} himself.` };
     },
   }),
   tool({

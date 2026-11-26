@@ -8,7 +8,7 @@ import { z } from 'zod';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
 import { TOOLS, toolByName, ToolError, type Ctx } from './tools.js';
-import { MemoryStore, NeonStore, type MessageStore } from './messages.js';
+import { MemoryStore, NeonStore, type MessageStore, type NeonSql } from './messages.js';
 import { findBannedClaims, allStrings } from './banned.js';
 import { openapi } from './openapi.js';
 
@@ -123,17 +123,18 @@ function defaultStore(): MessageStore {
     return new MemoryStore();
   }
   // Imported lazily so tests and local dev never need the driver or a network.
-  let sql: Promise<(q: TemplateStringsArray, ...v: unknown[]) => Promise<any[]>> | null = null;
-  const lazy = (q: TemplateStringsArray, ...v: unknown[]) => {
-    sql ??= import('@neondatabase/serverless').then(m => m.neon(url) as unknown as (q: TemplateStringsArray, ...v: unknown[]) => Promise<any[]>);
-    return sql.then(f => f(q, ...v));
-  };
-  return new NeonStore(lazy);
+  let sql: Promise<NeonSql> | null = null;
+  return new NeonStore(() => (sql ??= import('@neondatabase/serverless').then(m => m.neon(url) as unknown as NeonSql)));
 }
 
-function clientIp(req: Request) {
-  const xf = String(req.headers['x-forwarded-for'] ?? '').split(',')[0].trim();
-  return xf || req.socket.remoteAddress || 'unknown';
+/**
+ * The visitor's IP, from a source the visitor cannot write. On Vercel the platform sets x-real-ip and
+ * x-vercel-forwarded-for itself; the leftmost x-forwarded-for entry is client-controlled, so it is never used.
+ * Off Vercel (local dev, tests) x-real-ip is honoured so tests can simulate visitors.
+ */
+export function clientIp(req: Request) {
+  const fromPlatform = String(req.headers['x-vercel-forwarded-for'] ?? '').split(',')[0].trim() || String(req.headers['x-real-ip'] ?? '').trim();
+  return fromPlatform || req.socket.remoteAddress || 'unknown';
 }
 
 function rateLimit(max: number, windowMs: number) {
@@ -142,8 +143,8 @@ function rateLimit(max: number, windowMs: number) {
     if (req.path === '/api/health') return next();
     const ip = clientIp(req), now = Date.now();
     const list = (hits.get(ip) ?? []).filter(t => t > now - windowMs);
-    list.push(now); hits.set(ip, list);
-    if (hits.size > 5000) hits.clear();
+    list.push(now); hits.delete(ip); hits.set(ip, list); // re-insert: Map order is least-recently-seen first
+    if (hits.size > 5000) for (const k of [...hits.keys()].slice(0, 1000)) hits.delete(k); // evict the oldest, never everyone
     if (list.length > max) return void res.status(429).set('Retry-After', String(Math.ceil(windowMs / 1000))).json({ error: 'rate_limited', message: 'Too many requests. Try again in a minute.' });
     next();
   };

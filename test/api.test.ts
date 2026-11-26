@@ -23,7 +23,7 @@ beforeEach(async () => {
 });
 afterEach(() => new Promise<void>(r => { app.closeAllConnections?.(); app.close(() => r()); }));
 const call = (name: string, body: unknown = {}, ip = '203.0.113.1') =>
-  request(app).post(`/api/tools/${name}`).set('x-forwarded-for', ip).send(body as object);
+  request(app).post(`/api/tools/${name}`).set('x-real-ip', ip).send(body as object);
 
 // Valid input for every tool, so every response can be scanned.
 const SAMPLE: Record<string, unknown> = {
@@ -208,6 +208,33 @@ describe('message Dan', () => {
     const r = await call('send_message', { confirm_token: t }, '198.51.100.7');
     expect(r.status).toBe(429);
     expect(store.rows).toHaveLength(3);
+  });
+  it('a faked x-forwarded-for does not get round the limit', async () => {
+    const send = async (n: number) => {
+      const t = (await request(app).post('/api/tools/draft_message').set({ 'x-real-ip': '198.51.100.9', 'x-forwarded-for': `10.0.0.${n}` }).send({ ...draft, message: `spoof ${n}` })).body.confirm_token;
+      return request(app).post('/api/tools/send_message').set({ 'x-real-ip': '198.51.100.9', 'x-forwarded-for': `10.0.0.${n}` }).send({ confirm_token: t });
+    };
+    const codes = [];
+    for (let n = 0; n < 5; n++) codes.push((await send(n)).status);
+    expect(codes).toEqual([200, 200, 200, 429, 429]);
+    expect(store.rows).toHaveLength(3);
+  });
+  it('parallel sends cannot beat the limit', async () => {
+    const tokens = await Promise.all(Array.from({ length: 8 }, (_, i) => call('draft_message', { ...draft, message: `burst ${i}` }, '198.51.100.20').then(r => r.body.confirm_token)));
+    const codes = (await Promise.all(tokens.map(t => call('send_message', { confirm_token: t }, '198.51.100.20')))).map(r => r.status).sort();
+    expect(codes).toEqual([200, 200, 200, 429, 429, 429, 429, 429]);
+    expect(store.rows).toHaveLength(3);
+  });
+  it('a cap across all visitors backs up the per-visitor limit', async () => {
+    const { SEND_LIMITS } = await import('../src/tools.js');
+    let ok = 0, limited = 0;
+    for (let i = 0; i < SEND_LIMITS.global + 2; i++) {
+      const ip = `192.0.2.${i + 1}`;
+      const t = (await call('draft_message', { ...draft, message: `g${i}` }, ip)).body.confirm_token;
+      const r = await call('send_message', { confirm_token: t }, ip);
+      if (r.status === 200) ok++; else if (r.status === 429) limited++;
+    }
+    expect([ok, limited]).toEqual([SEND_LIMITS.global, 2]);
   });
   it('send_message cannot be called with GET', async () => {
     expect((await request(app).get('/api/tools/send_message?confirm_token=x'.padEnd(60, 'x'))).status).toBe(405);

@@ -1,11 +1,9 @@
 // Loads data/facts.json and data/games.json, validates them, and exposes ONLY verified facts.
 // A fact marked "dan-to-confirm" is kept in the file (so Dan can see it) but is never served.
-import { readFileSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
-import { dirname, join } from 'node:path';
 import { z } from 'zod';
-
-const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
+// Imported, not read from disk at runtime, so the serverless bundle always contains them.
+import factsJson from '../data/facts.json' with { type: 'json' };
+import gamesJson from '../data/games.json' with { type: 'json' };
 
 const Fact = z.object({
   id: z.string().regex(/^[a-z0-9.-]+$/),
@@ -46,8 +44,8 @@ const GamesFile = z.object({
 export type Fact = z.infer<typeof Fact>;
 export type Project = z.infer<typeof Project>;
 
-export const rawFacts = FactsFile.parse(JSON.parse(readFileSync(join(ROOT, 'data/facts.json'), 'utf8')));
-export const games = GamesFile.parse(JSON.parse(readFileSync(join(ROOT, 'data/games.json'), 'utf8')));
+export const rawFacts = FactsFile.parse(factsJson);
+export const games = GamesFile.parse(gamesJson);
 
 const byId = new Map(rawFacts.facts.map(f => [f.id, f]));
 

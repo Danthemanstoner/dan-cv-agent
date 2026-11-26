@@ -16,10 +16,15 @@ export type Draft = z.infer<typeof DraftInput>;
 
 export type Saved = Draft & { ref: string; created_at: string; read_at: string | null };
 
+export type Limits = { perIp: number; global: number; windowMs: number };
+export type SaveResult = { status: 'saved' | 'duplicate'; ref: string } | { status: 'limited'; scope: 'visitor' | 'everyone' };
+
 export interface MessageStore {
-  /** Saves once per token hash; returns the existing row if this token was already used. */
-  save(row: Draft & { token_hash: string; ip_hash: string }): Promise<{ ref: string; duplicate: boolean }>;
-  countSince(ip_hash: string, sinceMs: number): Promise<number>;
+  /**
+   * Checks the limits and saves in ONE atomic step, so parallel sends cannot all pass a check made
+   * before any of them saved. A token that was already used returns its existing reference.
+   */
+  saveLimited(row: Draft & { token_hash: string; ip_hash: string }, limits: Limits): Promise<SaveResult>;
   list(limit: number): Promise<Saved[]>;
   markRead(ref: string): Promise<boolean>;
 }
@@ -59,62 +64,84 @@ export const ipHash = (ip: string) => createHmac('sha256', secret()).update(`ip:
 
 // ---------------------------------------------------------------- stores
 
+const REF = (id: number) => 'AD-' + String(id).padStart(4, '0');
+
 export class MemoryStore implements MessageStore {
   rows: (Saved & { token_hash: string; ip_hash: string; at: number })[] = [];
-  async save(row: Draft & { token_hash: string; ip_hash: string }) {
+  // No await between the checks and the push: in a single-threaded runtime that block is atomic.
+  async saveLimited(row: Draft & { token_hash: string; ip_hash: string }, l: Limits): Promise<SaveResult> {
     const dup = this.rows.find(r => r.token_hash === row.token_hash);
-    if (dup) return { ref: dup.ref, duplicate: true };
-    const ref = 'AD-' + String(this.rows.length + 1).padStart(4, '0');
+    if (dup) return { status: 'duplicate', ref: dup.ref };
+    const since = Date.now() - l.windowMs;
+    const recent = this.rows.filter(r => r.at >= since);
+    if (recent.filter(r => r.ip_hash === row.ip_hash).length >= l.perIp) return { status: 'limited', scope: 'visitor' };
+    if (recent.length >= l.global) return { status: 'limited', scope: 'everyone' };
+    const ref = REF(this.rows.length + 1);
     this.rows.push({ ...row, ref, created_at: new Date().toISOString(), read_at: null, at: Date.now() });
-    return { ref, duplicate: false };
+    return { status: 'saved', ref };
   }
-  async countSince(ip_hash: string, sinceMs: number) { return this.rows.filter(r => r.ip_hash === ip_hash && r.at >= sinceMs).length; }
   async list(limit: number) {
     return [...this.rows].reverse().slice(0, limit).map(({ token_hash: _t, ip_hash: _i, at: _a, ...r }) => r);
   }
   async markRead(ref: string) { const r = this.rows.find(x => x.ref === ref); if (!r) return false; r.read_at ??= new Date().toISOString(); return true; }
 }
 
+/** The subset of @neondatabase/serverless's `neon()` function this store uses. */
+export type NeonSql = {
+  (q: TemplateStringsArray, ...v: unknown[]): Promise<any[]>;
+  transaction(queries: Promise<any[]>[]): Promise<any[][]>;
+};
+
+const SEND_LOCK = 7_361_902; // advisory lock key: serialises sends so check-and-insert is atomic
+
 export class NeonStore implements MessageStore {
   private ready: Promise<void> | null = null;
-  constructor(private sql: (q: TemplateStringsArray, ...v: unknown[]) => Promise<any[]>) {}
-  private init() {
+  constructor(private db: () => Promise<NeonSql>) {}
+  private async sql() {
+    const sql = await this.db();
     this.ready ??= (async () => {
-      await this.sql`CREATE TABLE IF NOT EXISTS agent_messages (
+      await sql`CREATE TABLE IF NOT EXISTS agent_messages (
         id bigserial PRIMARY KEY,
         name text NOT NULL, reply_to text NOT NULL, message text NOT NULL,
         token_hash text NOT NULL UNIQUE, ip_hash text NOT NULL,
         created_at timestamptz NOT NULL DEFAULT now(), read_at timestamptz)`;
-      await this.sql`CREATE INDEX IF NOT EXISTS agent_messages_ip_time ON agent_messages (ip_hash, created_at)`;
+      await sql`CREATE INDEX IF NOT EXISTS agent_messages_ip_time ON agent_messages (ip_hash, created_at)`;
+      await sql`CREATE INDEX IF NOT EXISTS agent_messages_time ON agent_messages (created_at)`;
     })();
-    return this.ready;
+    await this.ready;
+    return sql;
   }
-  async save(r: Draft & { token_hash: string; ip_hash: string }) {
-    await this.init();
-    const ins = await this.sql`INSERT INTO agent_messages (name, reply_to, message, token_hash, ip_hash)
-      VALUES (${r.name}, ${r.reply_to}, ${r.message}, ${r.token_hash}, ${r.ip_hash})
-      ON CONFLICT (token_hash) DO NOTHING RETURNING ('AD-' || lpad(id::text, 4, '0')) AS ref`;
-    if (ins.length === 1) return { ref: ins[0].ref as string, duplicate: false };
-    // Assert the side effect: a conflict must mean an existing row for this token, never a silent drop.
-    const ex = await this.sql`SELECT ('AD-' || lpad(id::text, 4, '0')) AS ref FROM agent_messages WHERE token_hash = ${r.token_hash}`;
-    if (ex.length !== 1) throw new Error('message not saved');
-    return { ref: ex[0].ref as string, duplicate: true };
-  }
-  async countSince(ip_hash: string, sinceMs: number) {
-    await this.init();
-    const r = await this.sql`SELECT count(*)::int AS n FROM agent_messages WHERE ip_hash = ${ip_hash} AND created_at >= ${new Date(sinceMs).toISOString()}`;
-    return r[0].n as number;
+  async saveLimited(r: Draft & { token_hash: string; ip_hash: string }, l: Limits): Promise<SaveResult> {
+    const sql = await this.sql();
+    const secs = Math.ceil(l.windowMs / 1000);
+    // One transaction: take the lock, insert only if both limits allow it, then read back what happened.
+    const [, ins, existing, counts] = await sql.transaction([
+      sql`SELECT pg_advisory_xact_lock(${SEND_LOCK})`,
+      sql`INSERT INTO agent_messages (name, reply_to, message, token_hash, ip_hash)
+          SELECT ${r.name}, ${r.reply_to}, ${r.message}, ${r.token_hash}, ${r.ip_hash}
+          WHERE (SELECT count(*) FROM agent_messages WHERE ip_hash = ${r.ip_hash} AND created_at > now() - make_interval(secs => ${secs})) < ${l.perIp}
+            AND (SELECT count(*) FROM agent_messages WHERE created_at > now() - make_interval(secs => ${secs})) < ${l.global}
+          ON CONFLICT (token_hash) DO NOTHING
+          RETURNING id`,
+      sql`SELECT id FROM agent_messages WHERE token_hash = ${r.token_hash}`,
+      sql`SELECT count(*)::int AS n FROM agent_messages WHERE ip_hash = ${r.ip_hash} AND created_at > now() - make_interval(secs => ${secs})`,
+    ]);
+    if (ins.length === 1) return { status: 'saved', ref: REF(Number(ins[0].id)) };
+    if (existing.length === 1) return { status: 'duplicate', ref: REF(Number(existing[0].id)) };
+    // Not inserted and no row for this token: the only remaining reason is a limit. Say which.
+    return { status: 'limited', scope: counts[0].n >= l.perIp ? 'visitor' : 'everyone' };
   }
   async list(limit: number) {
-    await this.init();
-    const rows = await this.sql`SELECT ('AD-' || lpad(id::text, 4, '0')) AS ref, name, reply_to, message, created_at, read_at FROM agent_messages ORDER BY id DESC LIMIT ${limit}`;
-    return rows.map(r => ({ ...r, created_at: new Date(r.created_at).toISOString(), read_at: r.read_at ? new Date(r.read_at).toISOString() : null })) as Saved[];
+    const sql = await this.sql();
+    const rows = await sql`SELECT id, name, reply_to, message, created_at, read_at FROM agent_messages ORDER BY id DESC LIMIT ${limit}`;
+    return rows.map(r => ({ ref: REF(Number(r.id)), name: r.name, reply_to: r.reply_to, message: r.message,
+      created_at: new Date(r.created_at).toISOString(), read_at: r.read_at ? new Date(r.read_at).toISOString() : null }));
   }
   async markRead(ref: string) {
-    await this.init();
     const id = Number(String(ref).replace(/^AD-/, ''));
     if (!Number.isInteger(id) || id < 1) return false;
-    const r = await this.sql`UPDATE agent_messages SET read_at = coalesce(read_at, now()) WHERE id = ${id} RETURNING id`;
+    const sql = await this.sql();
+    const r = await sql`UPDATE agent_messages SET read_at = coalesce(read_at, now()) WHERE id = ${id} RETURNING id`;
     return r.length === 1;
   }
 }
