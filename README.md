@@ -62,6 +62,16 @@ curl localhost:3000/api/tools/get_project?slug=basketeer-ops
 npx @modelcontextprotocol/inspector   # then connect to http://localhost:3000/mcp (Streamable HTTP)
 ```
 
+## Acceptance test against the published agent
+
+`scripts/e2e/acceptance.mts` opens the public Agent Dan in a logged-out headless Chrome, asks the brief's 14 questions, scans every reply with the banned-claims check and checks the expected meaning. It never sends a message to Dan. It has its own `package.json`, so its browser tooling never ships with the API.
+
+```bash
+cd scripts/e2e && npm install && npm test   # needs Google Chrome
+```
+
+Latest run: `agentplace/acceptance/2026-11-27.md`.
+
 ## Deploy (Vercel)
 
 1. Create a Postgres database (Neon) and note its connection string.

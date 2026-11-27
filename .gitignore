@@ -6,3 +6,7 @@ lottie/trace
 *.log
 .DS_Store
 __pycache__/
+agentplace/.embed-v1.js
+agentplace/attach/
+agentplace/acceptance/latest/
+scripts/e2e/node_modules/

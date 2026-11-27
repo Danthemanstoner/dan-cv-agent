@@ -1,0 +1,8 @@
+{
+  "name": "agent-dan-acceptance",
+  "private": true,
+  "description": "Acceptance test against the published Agent Dan (logged out, headless Chrome). Kept separate from the API so its browser tooling never ships with it.",
+  "type": "module",
+  "scripts": { "test": "../../node_modules/.bin/tsx acceptance.mts" },
+  "devDependencies": { "puppeteer-core": "24.30.0" }
+}

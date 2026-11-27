@@ -26,7 +26,8 @@ export const BANNED: Banned[] = [
   { id: 'unverified-tech', why: 'no MCP, Cloudflare Workers or BigQuery as verified work', re: /\bcloudflare workers?\b|\bbigquery\b|\b(dan|he|his)\b[^.]{0,60}\bmcp (experience|expertise|servers? (he|dan) built)\b/i },
 ];
 
-const NEGATION = /(\bno\b|\bnot\b|\bnever\b|n't\b|\bwithout\b|\bavoids?\b|\brefuses?\b|\bnor\b)/i;
+// Straight and curly apostrophes: chat models write "can’t" as often as "can't".
+const NEGATION = /(\bno\b|\bnot\b|\bnever\b|n['’]t\b|\bcannot\b|\bwithout\b|\bavoids?\b|\brefuses?\b|\bnor\b)/i;
 
 export const sentences = (text: string) => text.split(/(?<=[.!?])\s+|\n+/).map(s => s.trim()).filter(Boolean);
 

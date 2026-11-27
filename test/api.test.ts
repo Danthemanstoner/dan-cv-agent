@@ -139,7 +139,7 @@ describe('truth rules', () => {
       'He won an award for the storefront.', 'Dan wrote Cloudflare Workers for the edge.'];
     for (const s of bad) expect(findBannedClaims(s).length, s).toBeGreaterThan(0);
     const ok = ['Basketeer is not on Shopify Plus.', "Dan doesn't have a university degree.", 'OpsLayer has no paying customers.',
-      'He did not found Basketeer.', "I don't give pay or rates.", 'OpsLayer has a real OAuth install flow.', 'OpsLayer is packaged so other Shopify merchants could run it.'];
+      'He did not found Basketeer.', "I don't give pay or rates.", 'I can’t verify Python experience for Dan.', 'Basketeer isn’t on Shopify Plus.', 'I cannot confirm a degree.', 'OpsLayer has a real OAuth install flow.', 'OpsLayer is packaged so other Shopify merchants could run it.'];
     for (const s of ok) expect(findBannedClaims(s), s).toEqual([]);
   });
   it('a response with a banned claim is blocked at runtime, not served', async () => {
